@@ -1,0 +1,10 @@
+[build]
+  base = "backend"
+  publish = "dist"
+  command = "npm run build"
+
+[functions]
+  directory = "functions"
+
+[context.production.environment]
+  NODE_ENV = "production"
