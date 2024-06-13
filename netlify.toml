@@ -1,5 +1,4 @@
 [build]
   base = "/"
   publish = "backend/dist"
-  command = "npm run build" # Replace with your actual build command
   functions = "backend/functions"
