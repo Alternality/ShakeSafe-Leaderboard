@@ -1,4 +1,4 @@
 [build]
   base = "Backend"
   publish = "dist"
-  functions = "Backend/functions"
+  functions = "functions"
