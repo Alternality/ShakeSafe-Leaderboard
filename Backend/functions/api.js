@@ -5,7 +5,6 @@ const serverless = require('serverless-http');
 const mongoose = require('mongoose');
 const cors = require('cors');
 const leaderboardRoutes = require('./routes/leaderboardRoutes');
-const { redirectToGoogleForm } = require('./googleFormRedirect'); // Import googleFormRedirect module
 
 const app = express();
 const router = express.Router();
@@ -25,11 +24,6 @@ mongoose.connect(dbCloudUrl || dbLocalUrl, { useNewUrlParser: true, useUnifiedTo
 // Mount leaderboard routes
 app.use('/.netlify/functions/api', leaderboardRoutes);
 
-// Example route that uses redirectToGoogleForm
-app.get('/redirect', (req, res) => {
-    redirectToGoogleForm();
-    res.send('Redirecting to Google Form...');
-});
 
 // Export the serverless app
 module.exports.handler = serverless(app);

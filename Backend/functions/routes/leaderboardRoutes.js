@@ -1,7 +1,5 @@
-// functions/routes/leaderboardRoutes.js
 const express = require('express');
 const LeaderboardModel = require('../models/leaderboardModel');
-
 const router = express.Router();
 
 // Get all entries in the leaderboard
@@ -22,14 +20,13 @@ router.get('/:id', getLeaderboardEntry, (req, res) => {
 // Add a new entry to the leaderboard
 router.post('/', async (req, res) => {
     try {
-        const { user, score, rank } = req.body;
-        if (!user || !score || !rank) {
-            return res.status(400).json({ message: 'User, score, and rank are required' });
+        const { user, score, time, mode } = req.body;
+        if (!user || !score || !time || !mode) {
+            return res.status(400).json({ message: 'User, score, time, and mode are required' });
         }
 
-        const newEntry = new LeaderboardModel({ user, score, rank });
-        const savedEntry = await newEntry.save();
-        res.status(201).json(savedEntry);
+        await addOrUpdateScore(user, score, time, mode);
+        res.status(201).json({ message: 'Score updated successfully' });
     } catch (error) {
         res.status(400).json({ message: error.message });
     }
@@ -49,6 +46,44 @@ async function getLeaderboardEntry(req, res, next) {
 
     res.leaderboardEntry = leaderboardEntry;
     next();
+}
+
+// Function to update ranks
+async function updateRanks(mode) {
+    const modeKey = mode === 'survival' ? 'survival' : 'timeAttack';
+    const leaderboard = await LeaderboardModel.find().sort({ [`${modeKey}.score`]: -1 });
+
+    for (let i = 0; i < leaderboard.length; i++) {
+        leaderboard[i][modeKey].rank = i + 1;
+        await leaderboard[i].save();
+    }
+}
+
+// Function to add or update a score
+async function addOrUpdateScore(user, score, time, mode) {
+    const modeKey = mode === 'survival' ? 'survival' : 'timeAttack';
+    let leaderboardEntry = await LeaderboardModel.findOne({ user });
+
+    if (leaderboardEntry) {
+        // Update existing entry
+        leaderboardEntry[modeKey].score = score;
+        leaderboardEntry[modeKey].time = time;
+    } else {
+        // Create new entry
+        leaderboardEntry = new LeaderboardModel({
+            user,
+            [modeKey]: {
+                score,
+                time,
+                rank: 0, // Initial rank, will be updated
+            },
+            survival: mode === 'survival' ? { score, time, rank: 0 } : { score: 0, time: 0, rank: 0 },
+            timeAttack: mode === 'timeAttack' ? { score, time, rank: 0 } : { score: 0, time: 0, rank: 0 }
+        });
+    }
+
+    await leaderboardEntry.save();
+    await updateRanks(mode);
 }
 
 module.exports = router;
