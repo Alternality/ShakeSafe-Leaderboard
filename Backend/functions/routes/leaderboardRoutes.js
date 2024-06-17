@@ -6,10 +6,11 @@ const router = express.Router();
 router.get('/survival', async (req, res) => {
     try {
         const leaderboard = await LeaderboardModel.find();
-        res.json(leaderboard.map(entry => ({
+        const survivalData = leaderboard.map(entry => ({
             user: entry.user,
             survival: entry.survival
-        })));
+        }));
+        res.json(survivalData);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -19,10 +20,11 @@ router.get('/survival', async (req, res) => {
 router.get('/timeAttack', async (req, res) => {
     try {
         const leaderboard = await LeaderboardModel.find();
-        res.json(leaderboard.map(entry => ({
+        const timeAttackData = leaderboard.map(entry => ({
             user: entry.user,
             timeAttack: entry.timeAttack
-        })));
+        }));
+        res.json(timeAttackData);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
@@ -103,3 +105,4 @@ async function addOrUpdateScore(user, score, time, mode) {
 }
 
 module.exports = router;
+
