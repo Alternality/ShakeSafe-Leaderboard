@@ -51,4 +51,4 @@ leaderboardSchema.pre('save', function (next) {
     next();
 });
 
-module.exports = mongoose.model('Leaderboard', leaderboardSchema);
+module.exports =leaderboardSchema;
