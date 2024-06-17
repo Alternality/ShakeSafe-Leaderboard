@@ -2,11 +2,27 @@ const express = require('express');
 const LeaderboardModel = require('../models/leaderboardModel');
 const router = express.Router();
 
-// GET all entries in the leaderboard
-router.get('/', async (req, res) => {
+// GET all entries in the leaderboard for survival mode
+router.get('/survival', async (req, res) => {
     try {
         const leaderboard = await LeaderboardModel.find();
-        res.json(leaderboard);
+        res.json(leaderboard.map(entry => ({
+            user: entry.user,
+            survival: entry.survival
+        })));
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
+
+// GET all entries in the leaderboard for timeAttack mode
+router.get('/timeAttack', async (req, res) => {
+    try {
+        const leaderboard = await LeaderboardModel.find();
+        res.json(leaderboard.map(entry => ({
+            user: entry.user,
+            timeAttack: entry.timeAttack
+        })));
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
