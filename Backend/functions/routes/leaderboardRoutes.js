@@ -2,36 +2,26 @@ const express = require('express');
 const LeaderboardModel = require('../models/leaderboardModel');
 const router = express.Router();
 
-// GET all entries in the leaderboard for survival mode
-router.get('/survival', async (req, res) => {
-    try {
-        const leaderboard = await LeaderboardModel.find();
-        const survivalData = leaderboard.map(entry => ({
-            user: entry.user,
-            survival: entry.survival
-        }));
-        res.json(survivalData);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+// GET all entries in the leaderboard for a specific mode
+router.get('/:mode', async (req, res) => {
+    const mode = req.params.mode;
 
-// GET all entries in the leaderboard for timeAttack mode
-router.get('/timeAttack', async (req, res) => {
     try {
-        const leaderboard = await LeaderboardModel.find();
-        const timeAttackData = leaderboard.map(entry => ({
-            user: entry.user,
-            timeAttack: entry.timeAttack
-        }));
-        res.json(timeAttackData);
+        let leaderboard;
+        if (mode === 'survival' || mode === 'timeAttack') {
+            leaderboard = await LeaderboardModel.find().sort({ [`${mode}.score`]: -1 });
+        } else {
+            return res.status(400).json({ message: 'Invalid mode specified' });
+        }
+
+        res.json(leaderboard);
     } catch (error) {
         res.status(500).json({ message: error.message });
     }
 });
 
 // GET a single entry in the leaderboard by ID
-router.get('/:id', getLeaderboardEntry, (req, res) => {
+router.get('/entry/:id', getLeaderboardEntry, (req, res) => {
     res.json(res.leaderboardEntry);
 });
 
@@ -105,4 +95,3 @@ async function addOrUpdateScore(user, score, time, mode) {
 }
 
 module.exports = router;
-
