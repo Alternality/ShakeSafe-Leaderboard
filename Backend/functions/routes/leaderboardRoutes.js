@@ -2,7 +2,7 @@ const express = require('express');
 const LeaderboardModel = require('../models/leaderboardModel');
 const router = express.Router();
 
-// Get all entries in the leaderboard
+// GET all entries in the leaderboard
 router.get('/', async (req, res) => {
     try {
         const leaderboard = await LeaderboardModel.find();
@@ -12,12 +12,12 @@ router.get('/', async (req, res) => {
     }
 });
 
-// Get a single entry in the leaderboard by ID
+// GET a single entry in the leaderboard by ID
 router.get('/:id', getLeaderboardEntry, (req, res) => {
     res.json(res.leaderboardEntry);
 });
 
-// Add a new entry to the leaderboard
+// POST a new entry to the leaderboard
 router.post('/', async (req, res) => {
     try {
         const { user, score, time, mode } = req.body;
@@ -37,7 +37,7 @@ async function getLeaderboardEntry(req, res, next) {
     let leaderboardEntry;
     try {
         leaderboardEntry = await LeaderboardModel.findById(req.params.id);
-        if (leaderboardEntry == null) {
+        if (!leaderboardEntry) {
             return res.status(404).json({ message: 'Entry not found' });
         }
     } catch (error) {
