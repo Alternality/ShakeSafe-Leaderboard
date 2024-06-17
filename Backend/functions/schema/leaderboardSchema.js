@@ -12,13 +12,17 @@ const leaderboardSchema = new Schema({
             required: true,
         },
         time: {
-            type: Number, // Assuming time is stored in seconds
+            type: Number, 
             required: true,
         },
         rank: {
             type: Number,
             required: true,
-        }
+        },
+        date: {
+            type: Date,
+            default: Date.now,
+        },
     },
     timeAttack: {
         score: {
@@ -26,13 +30,17 @@ const leaderboardSchema = new Schema({
             required: true,
         },
         time: {
-            type: Number, // Assuming time is stored in seconds
+            type: Number, 
             required: true,
         },
         rank: {
             type: Number,
             required: true,
-        }
+        },
+        date: {
+            type: Date,
+            default: Date.now,
+        },
     },
     date: {
         type: Date,
@@ -51,4 +59,4 @@ leaderboardSchema.pre('save', function (next) {
     next();
 });
 
-module.exports =leaderboardSchema;
+module.exports = leaderboardSchema;
