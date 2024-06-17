@@ -17,7 +17,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Connect to MongoDB
-mongoose.connect(dbCloudUrl || dbLocalUrl, { useNewUrlParser: true, useUnifiedTopology: true })
+mongoose.connect(dbCloudUrl || dbLocalUrl)
     .then(() => console.log('Connected to MongoDB'))
     .catch((error) => console.error('Failed to connect to MongoDB', error));
 
